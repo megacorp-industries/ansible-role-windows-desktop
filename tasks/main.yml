@@ -3,6 +3,25 @@
   win_timezone:
     timezone: AUS Central Standard Time
 
+- name: Create local root user
+  win_user:
+    name: root
+    password: changeme
+    state: present
+    groups:
+      - Administrators
+
+- name: Disable default Administrator user
+  win_user:
+    name: Administrator
+    account_disabled: true
+
+- name: Copy PowerShell Profile to host
+  win_copy:
+    src: Microsoft.PowerShell_profile.ps1
+    dest: C:\Users\{{ item }}\Powershell
+  loop: "{{ USERS }}"
+
 - name: Set sleep to never
   script: files/scripts/disable-sleep.bat
 
@@ -31,3 +50,10 @@
     name: openssh
     state: present
     package_params: /SSHServerFeature
+
+- name: Install Steam
+  win_package:
+    path: https://cdn.akamai.steamstatic.com/client/installer/SteamSetup.exe
+    arguments: /S
+    product_id: Steam
+    state: present
