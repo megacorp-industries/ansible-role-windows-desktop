@@ -3,25 +3,6 @@
   win_timezone:
     timezone: AUS Central Standard Time
 
-- name: Create local root user
-  win_user:
-    name: root
-    password: changeme
-    state: present
-    groups:
-      - Administrators
-
-- name: Disable default Administrator user
-  win_user:
-    name: Administrator
-    account_disabled: true
-
-- name: Copy PowerShell profile to host
-  win_copy:
-    src: Microsoft.PowerShell_profile.ps1
-    dest: C:\Users\{{ item }}\Powershell
-  loop: "{{ USERS }}"
-
 - name: Set sleep to never
   script: files/scripts/disable-sleep.bat
 
@@ -57,3 +38,23 @@
     arguments: /S
     product_id: Steam
     state: present
+
+- name: Create local root user
+  win_user:
+    name: root
+    state: present
+    groups:
+      - Administrators
+
+- name: Disable default Administrator user
+  win_user:
+    name: Administrator
+    account_disabled: true
+
+- name: Copy PowerShell profile to host
+  win_copy:
+    src: Microsoft.PowerShell_profile.ps1
+    dest: C:\Users\{{ item }}\Documents\PowerShell
+  loop: "{{ USERS }}"
+
+
