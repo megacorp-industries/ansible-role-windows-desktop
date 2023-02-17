@@ -16,7 +16,7 @@
     name: Administrator
     account_disabled: true
 
-- name: Copy PowerShell Profile to host
+- name: Copy PowerShell profile to host
   win_copy:
     src: Microsoft.PowerShell_profile.ps1
     dest: C:\Users\{{ item }}\Powershell
