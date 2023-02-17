@@ -1,0 +1,33 @@
+---
+- name: Set the timezone to Darwin
+  win_timezone:
+    timezone: AUS Central Standard Time
+
+- name: Set sleep to never
+  script: files/scripts/disable-sleep.bat
+
+- name: Set hibernation to never
+  script: files/scripts/disable-hibernation.bat
+
+- name: Install necessary updates
+  win_updates:
+    category_names:
+      - SecurityUpdates
+      - CriticalUpdates
+      - UpdateRollups
+    reboot: true
+
+- name: Install preferred chocolatey software (no params)
+  win_chocolatey:
+    name:
+      - firefox
+      - vim
+      - spotify
+      - pwsh
+    state: present
+
+- name: Install Openssh
+  win_chocolatey:
+    name: openssh
+    state: present
+    package_params: /SSHServerFeature
