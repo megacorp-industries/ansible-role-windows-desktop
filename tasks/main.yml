@@ -10,9 +10,8 @@
   script: scripts/disable-hibernation.bat
 
 - name: Install Hyper-V (manual restart required when first run)
-  block:
-    - name: Run Hyper-V install script
-      script: scripts/install-HyperV.ps1
+  script: scripts/install-HyperV.ps1
+  when: INSTALL_HYPERV
 
 - name: Install necessary updates
   win_updates:
