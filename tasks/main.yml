@@ -73,10 +73,7 @@
     create: true
     line: "{{ lookup('url', 'https://github.com/megacorp-industries.keys', split_lines=False) }}"
 
-- name: Copy PowerShell profile to host
+- name: Copy PowerShell profile to root
   win_copy:
     src: configs/Microsoft.PowerShell_profile.ps1
-    dest: C:\Users\{{ item }}\Documents\PowerShell
-  loop: "{{ USERS }}"
-
-
+    dest: C:\Users\root\Documents\PowerShell
