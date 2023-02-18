@@ -4,10 +4,13 @@
     timezone: AUS Central Standard Time
 
 - name: Set sleep to never
-  script: files/scripts/disable-sleep.bat
+  script: scripts/disable-sleep.bat
 
 - name: Set hibernation to never
-  script: files/scripts/disable-hibernation.bat
+  script: scripts/disable-hibernation.bat
+
+- name: Install RSAT Server Manager tool
+  script: scripts/install-RSATServerManager.ps1
 
 - name: Install necessary updates
   win_updates:
@@ -26,12 +29,6 @@
       - pwsh
     state: present
 
-- name: Install Openssh
-  win_chocolatey:
-    name: openssh
-    state: present
-    package_params: /SSHServerFeature
-
 - name: Install Steam
   win_package:
     path: https://cdn.akamai.steamstatic.com/client/installer/SteamSetup.exe
@@ -39,21 +36,46 @@
     product_id: Steam
     state: present
 
+- name: Create group for ssh users
+  win_group:
+    name: SSHUsers
+    state: present
+    description: Users of this group can ssh into the system
+
 - name: Create local root user
   win_user:
     name: root
     state: present
     groups:
       - Administrators
+      - SSHUsers
 
 - name: Disable default Administrator user
   win_user:
     name: Administrator
     account_disabled: true
 
+- name: Install Openssh
+  win_chocolatey:
+    name: openssh
+    state: present
+    package_params: /SSHServerFeature
+
+- name: Copy ssh server config
+  win_copy:
+    src: configs/sshd_config
+    dest: C:\ProgramData\ssh
+
+- name: Add SSH keys to authorized key file
+  win_lineinfile:
+    path: C:\ProgramData\ssh\sshusers_authorized_keys
+    state: present
+    create: true
+    line: "{{ lookup('url', 'https://github.com/megacorp-industries.keys', split_lines=False) }}"
+
 - name: Copy PowerShell profile to host
   win_copy:
-    src: Microsoft.PowerShell_profile.ps1
+    src: configs/Microsoft.PowerShell_profile.ps1
     dest: C:\Users\{{ item }}\Documents\PowerShell
   loop: "{{ USERS }}"
 
