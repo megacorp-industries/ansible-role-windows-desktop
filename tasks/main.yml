@@ -9,8 +9,10 @@
 - name: Set hibernation to never
   script: scripts/disable-hibernation.bat
 
-- name: Install RSAT Server Manager tool
-  script: scripts/install-RSATServerManager.ps1
+- name: Install Hyper-V (manual restart required when first run)
+  block:
+    - name: Run Hyper-V install script
+      script: scripts/install-HyperV.ps1
 
 - name: Install necessary updates
   win_updates:
