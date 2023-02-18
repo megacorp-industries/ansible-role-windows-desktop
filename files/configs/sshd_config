@@ -1,3 +1,6 @@
+#THIS FILE IS MANAGED BY ANSIBLE AND CHANGES WILL BE OVERWRITTEN!#
+#IF YOU NEED TO MAKE CHANGES EDIT THE SOURCE FILE THAT ANSIBLE COPIES INSTEAD#
+
 # This is the sshd server system-wide configuration file.  See
 # sshd_config(5) for more information.
 
