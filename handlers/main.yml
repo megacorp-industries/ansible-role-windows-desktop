@@ -1,0 +1,5 @@
+---
+- name: Restart SSHD
+  win_service:
+    name: sshd
+    state: restarted

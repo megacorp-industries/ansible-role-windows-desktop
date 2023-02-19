@@ -21,6 +21,31 @@
       - UpdateRollups
     reboot: true
 
+- name: Install and configure SSH server
+  block:
+    - name: Install Openssh
+      win_chocolatey:
+        name: openssh
+        state: present
+        package_params: /SSHServerFeature
+    - name: Copy ssh server config
+      win_copy:
+        src: configs/sshd_config
+        dest: C:\ProgramData\ssh
+      notify:
+        - Restart SSHD
+    - name: Add SSH keys to authorized key file
+      win_lineinfile:
+        path: C:\ProgramData\ssh\sshusers_authorized_keys
+        state: present
+        create: true
+        line: "{{ lookup('url', 'https://github.com/megacorp-industries.keys', split_lines=False) }}"
+    - name: Create group for ssh users
+      win_group:
+        name: SSHUsers
+        state: present
+        description: Users of this group can ssh into the system
+
 - name: Install preferred chocolatey software (no params)
   win_chocolatey:
     name:
@@ -37,12 +62,6 @@
     product_id: Steam
     state: present
 
-- name: Create group for ssh users
-  win_group:
-    name: SSHUsers
-    state: present
-    description: Users of this group can ssh into the system
-
 - name: Create local root user
   win_user:
     name: root
@@ -55,26 +74,6 @@
   win_user:
     name: Administrator
     account_disabled: true
-
-- name: Install and configure SSH server
-  block:
-    - name: Install Openssh
-      win_chocolatey:
-        name: openssh
-        state: present
-        package_params: /SSHServerFeature
-    
-    - name: Copy ssh server config
-      win_copy:
-        src: configs/sshd_config
-        dest: C:\ProgramData\ssh
-    
-    - name: Add SSH keys to authorized key file
-      win_lineinfile:
-        path: C:\ProgramData\ssh\sshusers_authorized_keys
-        state: present
-        create: true
-        line: "{{ lookup('url', 'https://github.com/megacorp-industries.keys', split_lines=False) }}"
 
 - name: Copy PowerShell profile to root
   win_copy:
