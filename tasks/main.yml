@@ -53,6 +53,7 @@
       - vim
       - spotify
       - pwsh
+      - vscode
     state: present
 
 - name: Install Steam
